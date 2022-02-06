@@ -3,6 +3,7 @@ package com.example.Agenda_C.controller;
 import com.example.Agenda_C.domain.Project;
 import com.example.Agenda_C.domain.Time;
 import com.example.Agenda_C.domain.User;
+import com.example.Agenda_C.dto.UpdateGlobal;
 import com.example.Agenda_C.dto.UpdateRequest;
 import com.example.Agenda_C.exporter.UserReportExporter;
 import com.example.Agenda_C.registration.RegistrationRequest;
@@ -71,7 +72,7 @@ public class AdminControll {
         List<User> users = userRepository.findByManagerId(manager_id);
         return users;
     }
-
+    /*
     @PatchMapping("/role/{id}")
     public User editRole(@PathVariable Long id,@RequestBody String role){
         User user = userRepository.findById(id).get();
@@ -106,6 +107,8 @@ public class AdminControll {
         return userRepository.save(user);
     }
 
+
+     */
     @PatchMapping("/change-affec/{id_manager}")
     public Project changeAffectation(@PathVariable Long id_manager,@RequestBody Long project_id){
         User manager = userRepository.findById(id_manager).get();
@@ -120,6 +123,31 @@ public class AdminControll {
         project.setManager(manager);
         projectRepository.save(project);
         return project;
+    }
+
+    @PatchMapping("/update/user/{id}")
+    public User updateUser(@PathVariable Long id,@RequestBody UpdateGlobal updateGlobal){
+        User user = userRepository.findById(id).get();
+        // Enable/Disable
+        user.setEnabled(updateGlobal.isEnabled());
+        //Role
+        if(updateGlobal.getRoleId()!=null){
+            user.setRole(roleRepository.getById(updateGlobal.getRoleId()));
+        }
+        if(updateGlobal.getFirstname()!=null){
+            user.setFirstname(updateGlobal.getFirstname());
+        }
+        if(updateGlobal.getLastname()!=null){
+            user.setLastname(updateGlobal.getLastname());
+        }
+        if(updateGlobal.getEmail()!=null){
+            user.setEmail(updateGlobal.getEmail());
+        }
+        if(updateGlobal.getManagerId()!=null && user.getRole().getId()==1L){
+            user.setManager(userRepository.getById(updateGlobal.getManagerId()));
+        }
+        userRepository.save(user);
+        return user;
     }
 
     @PostMapping("/add-user")

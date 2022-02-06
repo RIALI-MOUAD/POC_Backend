@@ -72,4 +72,9 @@ public class EmployeeController {
         return timeRepository.findAllByUserId(currentUser_id);
     }
 
+    @GetMapping("/projects")
+    public List<Project> fetchAllProjects(){
+        return projectRepository.findAll();
+    }
+
 }
