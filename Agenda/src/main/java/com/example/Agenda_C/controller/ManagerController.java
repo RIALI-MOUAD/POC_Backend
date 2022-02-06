@@ -67,10 +67,21 @@ public class ManagerController {
     @PatchMapping("/edit-profile/")
     public User updateProfile(@RequestBody UpdateRequest New_user,@PathVariable String jwtToken){
         User user = userService.getloggedUser(jwtToken);
-        user.setFirstname(New_user.getFirstname());
-        user.setLastname(New_user.getLastname());
-        //user.setEmail(New_user.getEmail());
-        user.setFullname(New_user.getFullname());
+        if(New_user.getFirstname()!=null){
+            user.setFirstname(New_user.getFirstname());
+        }
+        if(New_user.getLastname()!=null){
+            user.setLastname(New_user.getLastname());
+        }
+        if(New_user.getEmail()!=null){
+            user.setEmail(New_user.getEmail());
+        }
+        if(New_user.getFullname()!=null){
+            user.setFullname(New_user.getFullname());
+        }
+        if(New_user.getFirstname()!=null){
+            user.setFirstname(New_user.getFirstname());
+        }
         return userRepository.save(user);
     }
 

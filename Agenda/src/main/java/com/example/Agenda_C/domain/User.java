@@ -1,6 +1,7 @@
 package com.example.Agenda_C.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonSerialize
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

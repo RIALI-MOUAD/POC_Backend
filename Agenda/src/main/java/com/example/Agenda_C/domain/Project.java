@@ -1,16 +1,20 @@
 package com.example.Agenda_C.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "project")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonSerialize
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

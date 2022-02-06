@@ -3,6 +3,7 @@ package com.example.Agenda_C.controller;
 import com.example.Agenda_C.domain.Project;
 import com.example.Agenda_C.domain.Time;
 import com.example.Agenda_C.domain.User;
+import com.example.Agenda_C.dto.Affectation;
 import com.example.Agenda_C.dto.UpdateGlobal;
 import com.example.Agenda_C.dto.UpdateRequest;
 import com.example.Agenda_C.exporter.UserReportExporter;
@@ -50,10 +51,21 @@ public class AdminControll {
     @PatchMapping("/edit-profile/")
     public User updateProfile(@RequestBody UpdateRequest New_user,@PathVariable String jwtToken){
         User user = userService.getloggedUser(jwtToken);
-        user.setFirstname(New_user.getFirstname());
-        user.setLastname(New_user.getLastname());
-        user.setEmail(New_user.getEmail());
-        user.setFullname(New_user.getFullname());
+        if(New_user.getFirstname()!=null){
+            user.setFirstname(New_user.getFirstname());
+        }
+        if(New_user.getLastname()!=null){
+            user.setLastname(New_user.getLastname());
+        }
+        if(New_user.getEmail()!=null){
+            user.setEmail(New_user.getEmail());
+        }
+        if(New_user.getFullname()!=null){
+            user.setFullname(New_user.getFullname());
+        }
+        if(New_user.getFirstname()!=null){
+            user.setFirstname(New_user.getFirstname());
+        }
         return userRepository.save(user);
     }
 
@@ -109,20 +121,27 @@ public class AdminControll {
 
 
      */
-    @PatchMapping("/change-affec/{id_manager}")
-    public Project changeAffectation(@PathVariable Long id_manager,@RequestBody Long project_id){
-        User manager = userRepository.findById(id_manager).get();
-        Project project = projectRepository.getById(project_id);
+    @PostMapping("/affectation")
+    public Project changeAffectation(@RequestBody Affectation affectation){
+        User manager = userRepository.findById(affectation.getManagerId()).get();
+        System.out.println("II\n");
+        Project project = projectRepository.getById(affectation.getProjectId());
+        System.out.println(project);
         // Affect All affected users to new Manger
+        System.out.println("III\n");
         List<User> affectedUsers = userRepository.findByManagerId(project.getManager().getId());
+        System.out.println("IIII\n");
         for(User u:affectedUsers){
             u.setManager(manager);
+            System.out.println("IIIII\n");
             userRepository.save(u);
         }
         //Project to new Manager
         project.setManager(manager);
-        projectRepository.save(project);
-        return project;
+        System.out.println(project);
+        System.out.println("IIIIII\n");
+        System.out.println(project);
+        return projectRepository.save(project);
     }
 
     @PatchMapping("/update/user/{id}")
@@ -132,6 +151,21 @@ public class AdminControll {
         user.setEnabled(updateGlobal.isEnabled());
         //Role
         if(updateGlobal.getRoleId()!=null){
+            if(user.getRole().getLabel().equals("MANAGER") && updateGlobal.getRoleId()!=2L){
+                List<User> usersAff = userRepository.findByManagerId(user.getId());
+                for(User u:usersAff){
+                    if(u!=null){
+                        u.setManager(null);
+                        userRepository.save(u);
+                    }
+                    List<Project> projects = projectRepository.findByManagerId(user.getId());
+                    if(projects.size()>0 && projects!=null){
+                        projects.forEach(project -> {project.setManager(null);});
+                        projectRepository.saveAll(projects);
+                    }
+                }
+
+            }
             user.setRole(roleRepository.getById(updateGlobal.getRoleId()));
         }
         if(updateGlobal.getFirstname()!=null){

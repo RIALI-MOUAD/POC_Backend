@@ -1,5 +1,6 @@
 package com.example.Agenda_C.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.Date;
 @Table(name = "verification_token")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonSerialize
 public class VerificationToken {
     private static final int EXPIRATION = 60 * 10;
 
