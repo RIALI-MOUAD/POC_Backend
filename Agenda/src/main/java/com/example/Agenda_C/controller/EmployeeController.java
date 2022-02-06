@@ -5,13 +5,17 @@ import com.example.Agenda_C.domain.Time;
 import com.example.Agenda_C.domain.User;
 import com.example.Agenda_C.dto.TimeRequest;
 import com.example.Agenda_C.dto.UpdateRequest;
+import com.example.Agenda_C.exporter.UserReportExporter;
 import com.example.Agenda_C.repository.ProjectRepository;
 import com.example.Agenda_C.repository.TimeRepository;
 import com.example.Agenda_C.repository.UserRepository;
 import com.example.Agenda_C.service.UserService;
+import com.lowagie.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -88,4 +92,13 @@ public class EmployeeController {
         return projectRepository.findAll();
     }
 
+    @GetMapping("/date/export/{date}")
+    public void exportToPDF(HttpServletResponse response, @PathVariable String date, @PathVariable String jwtToken) throws DocumentException, IOException, DocumentException, IOException {
+        User user = userRepository.findByTokenSignature(jwtToken).get();
+        response.setContentType("application/pdf");
+        List<Time> timesOfUser = timeRepository.findAllByUserIdAndDateOfProject(user.getId(), date);
+        UserReportExporter exporter = new UserReportExporter(timesOfUser,user, date);
+        exporter.export(response);
+
+    }
 }

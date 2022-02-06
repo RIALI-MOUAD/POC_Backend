@@ -44,7 +44,6 @@ public class AgendaCApplication {
 		return new CorsFilter(source);
 	}
 
-/*
 	@Bean
 	public ApplicationRunner initializer(RoleRepository repository,
 										 UserRepository userRepository,
@@ -80,6 +79,5 @@ public class AgendaCApplication {
 							userRepository.findByUsername("usernameTwo").get()));
 		};
 	}
-
- */
+	
 }

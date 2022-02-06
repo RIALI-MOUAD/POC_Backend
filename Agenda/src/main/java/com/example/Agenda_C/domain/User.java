@@ -70,7 +70,7 @@ public class User {
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
-        //this.createdAt = Instant.from(LocalDateTime.now());
+        this.createdAt = Instant.from(LocalDateTime.now());
         this.fullname = lastname + " "+firstname;
         this.enabled = false;
         this.password = password;

@@ -5,16 +5,20 @@ import com.example.Agenda_C.domain.Time;
 import com.example.Agenda_C.domain.User;
 import com.example.Agenda_C.dto.ProjetBody;
 import com.example.Agenda_C.dto.UpdateRequest;
+import com.example.Agenda_C.exporter.UserReportExporter;
 import com.example.Agenda_C.registration.RegistrationRequest;
 import com.example.Agenda_C.repository.ProjectRepository;
 import com.example.Agenda_C.repository.RoleRepository;
 import com.example.Agenda_C.repository.TimeRepository;
 import com.example.Agenda_C.repository.UserRepository;
 import com.example.Agenda_C.service.UserService;
+import com.lowagie.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Hashtable;
 import java.util.List;
@@ -115,5 +119,19 @@ public class ManagerController {
         User manager = userRepository.findByTokenSignature(jwtToken).get();
         user.setManager(manager);
         return userRepository.save(user);
+    }
+
+    @GetMapping("/date/export/{userId}/{date}")
+    public void exportToPDF(HttpServletResponse response, @PathVariable Long userId, @PathVariable String jwtToken, @PathVariable String date ) throws DocumentException, IOException, DocumentException, IOException {
+        response.setContentType("application/pdf");
+        User user = userRepository.findById(userId).get();
+        User manager = userRepository.findByTokenSignature(jwtToken).get();
+        if(manager.getId()== user.getManager().getId()){
+            List<Time> timesOfUser = timeRepository.findAllByUserIdAndDateOfProject(userId,date);
+            UserReportExporter exporter = new UserReportExporter(timesOfUser,user, date);
+            exporter.export(response);
+        }else{
+            System.out.println("You re not the manager");
+        }
     }
 }

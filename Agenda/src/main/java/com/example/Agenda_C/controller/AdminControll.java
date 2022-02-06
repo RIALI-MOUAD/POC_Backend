@@ -124,23 +124,16 @@ public class AdminControll {
     @PostMapping("/affectation")
     public Project changeAffectation(@RequestBody Affectation affectation){
         User manager = userRepository.findById(affectation.getManagerId()).get();
-        System.out.println("II\n");
         Project project = projectRepository.getById(affectation.getProjectId());
-        System.out.println(project);
         // Affect All affected users to new Manger
-        System.out.println("III\n");
         List<User> affectedUsers = userRepository.findByManagerId(project.getManager().getId());
-        System.out.println("IIII\n");
         for(User u:affectedUsers){
             u.setManager(manager);
-            System.out.println("IIIII\n");
+            //System.out.println("IIIII\n");
             userRepository.save(u);
         }
         //Project to new Manager
         project.setManager(manager);
-        System.out.println(project);
-        System.out.println("IIIIII\n");
-        System.out.println(project);
         return projectRepository.save(project);
     }
 
